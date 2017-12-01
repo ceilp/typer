@@ -27,7 +27,7 @@ var WordView = Backbone.View.extend({
 						'background-color':'#fff',
 						border:'1px solid #ccc',
 						'text-align':'center',
-						float:'left'
+						display:'inline-block'
 					})
 					.text(string.charAt(i).toUpperCase()));
 		}
@@ -61,7 +61,8 @@ var TyperView = Backbone.View.extend({
 				top:'0',
 				left:'0',
 				width:'100%',
-				height:'100%'
+				height:'100%',
+                "white-space":'nowrap',
 			});
 		this.wrapper = wrapper;
 		
@@ -138,7 +139,7 @@ var Typer = Backbone.Model.extend({
 		min_distance_between_words:50,
 		words:new Words(),
 		min_speed:1,
-		max_speed:5,
+		max_speed:5
 	},
 	
 	initialize: function() {
