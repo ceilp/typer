@@ -13,4 +13,4 @@ Backbone JS | [backbonejs.org](http://backbonejs.org) | [backbonejs.org](http://
 
 3. Aplikasi itu tidak akan jalan di salah satu 3 browser populer (Chrome, Firefox, Internet Explorer)? Kenapa? Solusinya hanya menghapus satu character di code, character yang mana?    
 
-> Internet Explorer, karena ...
+> Internet Explorer, karena ada extra koma di typer.js line 141 (sebelum file diubah), Internet Explorer terkenal cukup strict tanpa toleransi untuk hal semacam ini
