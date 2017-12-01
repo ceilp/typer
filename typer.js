@@ -138,8 +138,9 @@ var Typer = Backbone.Model.extend({
 		max_num_words:10,
 		min_distance_between_words:50,
 		words:new Words(),
-		min_speed:1,
-		max_speed:5
+		min_speed:1, // speed for 100ms
+		max_speed:5, // speed for 100ms
+        frame_rate:6 // frame rate 60fps
 	},
 	
 	initialize: function() {
@@ -150,7 +151,7 @@ var Typer = Backbone.Model.extend({
 	},
 
 	start: function() {
-		var animation_delay = 100;
+		var animation_delay = 100 / this.get('frame_rate');
 		var self = this;
 		setInterval(function() {
 			self.iterate();
@@ -184,7 +185,7 @@ var Typer = Backbone.Model.extend({
 					x:this.random_number_from_interval(0,$(window).width()),
 					y:0,
 					string:filtered_string,
-					speed:this.random_number_from_interval(this.get('min_speed'),this.get('max_speed'))
+					speed:this.random_number_from_interval(this.get('min_speed'),this.get('max_speed')/this.get('frame_rate'))
 				});
 				words.add(word);
 			}
