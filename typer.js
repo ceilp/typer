@@ -62,11 +62,25 @@ var TyperView = Backbone.View.extend({
 				left:'0',
 				width:'100%',
 				height:'100%',
-                "white-space":'nowrap',
+                "white-space":'nowrap'
 			});
 		this.wrapper = wrapper;
 		
-		var self = this;
+		var self = this
+
+        var score = $('<div>')
+            .css({
+                'border-radius':'4px',
+                position:'absolute',
+                top: '10px',
+                left: '10px',
+                'margin-bottom':'10px',
+                'z-index':'1000',
+                background:'white',
+                padding:'10px'
+            });
+        this.renderScore(score);
+
 		var text_input = $('<input>')
 			.addClass('form-control')
 			.css({
@@ -79,21 +93,30 @@ var TyperView = Backbone.View.extend({
 				'z-index':'1000'
 			}).keyup(function() {
 				var words = self.model.get('words');
+                var no_match = true;
+                var typed_string = $(this).val();
 				for(var i = 0;i < words.length;i++) {
 					var word = words.at(i);
-					var typed_string = $(this).val();
 					var string = word.get('string');
 					if(string.toLowerCase().indexOf(typed_string.toLowerCase()) == 0) {
 						word.set({highlight:typed_string.length});
 						if(typed_string.length == string.length) {
 							$(this).val('');
+                            self.model.set('score',self.model.get('score')+1);
+                            self.renderScore(score);
 						}
+						no_match = false;
 					} else {
 						word.set({highlight:0});
 					}
 				}
+				if(typed_string.length>0 && no_match){
+                    self.model.set('score',self.model.get('score')-1);
+                    $(this).val('');
+                    self.renderScore(score);
+                }
 			});
-		
+
 		$(this.el)
 			.append(wrapper
 				.append($('<form>')
@@ -103,7 +126,10 @@ var TyperView = Backbone.View.extend({
 					.submit(function() {
 						return false;
 					})
-					.append(text_input)));
+					.append(text_input)
+                    .append(score)
+                )
+            );
 		
 		text_input.css({left:((wrapper.width() - text_input.width()) / 2) + 'px'});
 		text_input.focus();
@@ -130,7 +156,11 @@ var TyperView = Backbone.View.extend({
 				word.get('view').render();
 			}
 		}
-	}
+	},
+
+	renderScore: function(score_el){
+        score_el.text("Score : " + this.model.get('score'));
+    }
 });
 
 var Typer = Backbone.Model.extend({
@@ -140,7 +170,8 @@ var Typer = Backbone.Model.extend({
 		words:new Words(),
 		min_speed:1, // speed for 100ms
 		max_speed:5, // speed for 100ms
-        frame_rate:6 // frame rate 60fps
+        frame_rate:6, // frame rate 60fps
+        score:0
 	},
 	
 	initialize: function() {
