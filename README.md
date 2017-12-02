@@ -9,7 +9,7 @@ Backbone JS | [backbonejs.org](http://backbonejs.org) | [backbonejs.org](http://
 
 2. Aplikasi itu 'laggy'. Kenapa? Bagaimana cara membuat animasi lebih 'smooth'?
 
-> Karena animasi aplikasi tersebut berjalan dalam 10fps. dengan meningkatkan fps nya, 30-60 fps cukup bagus, saya ubah fpsnya menjadi 60fps dengan meningkatkan frekuensi iterasi animasinya dan mengurangi kecepatan turun menyesuaikan dengan peningkatan frekuensi animasi
+> Karena animasi aplikasi tersebut berjalan dalam 10fps. dengan meningkatkan fps nya, 30-60 fps cukup bagus, saya ubah fpsnya menjadi 60fps dengan meningkatkan frekuensi iterasi animasinya
 
 3. Aplikasi itu tidak akan jalan di salah satu 3 browser populer (Chrome, Firefox, Internet Explorer)? Kenapa? Solusinya hanya menghapus satu character di code, character yang mana?    
 

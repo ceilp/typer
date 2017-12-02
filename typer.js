@@ -296,13 +296,14 @@ var Typer = Backbone.Model.extend({
 						filtered_string += string.charAt(j);
 					}
 				}
-				
+				var speed = this.random_number_from_interval(this.get('min_speed'),this.get('max_speed'));
 				var word = new Word({
 					x:this.random_number_from_interval(0,$(window).width()),
 					y:0,
 					string:filtered_string,
-					speed:this.random_number_from_interval(this.get('min_speed'),this.get('max_speed')/this.get('frame_rate'))
+					'speed':speed
 				});
+				console.log(speed);
 				words.add(word);
 			}
 		}
