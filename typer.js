@@ -92,6 +92,7 @@ var TyperView = Backbone.View.extend({
 				'margin-bottom':'10px',
 				'z-index':'1000'
 			}).keyup(function() {
+                if(!self.model.get('interval'))return;
 				var words = self.model.get('words');
                 var no_match = true;
                 var typed_string = $(this).val();
@@ -117,6 +118,52 @@ var TyperView = Backbone.View.extend({
                 }
 			});
 
+        var button_start = $('<button>')
+            .addClass('btn btn-default btn-sm')
+            .append(
+                $('<span>')
+                    .addClass('glyphicon glyphicon-play')
+                    .text(' Start/Resume')
+            )
+            .click(function(){
+                text_input.prop('disabled',false);
+                self.model.start();
+                text_input.focus();
+            });
+        var button_stop = $('<button>')
+            .addClass('btn btn-default btn-sm')
+            .append(
+                $('<span>')
+                    .addClass('glyphicon glyphicon-stop')
+                    .text(' Stop')
+            )
+            .click(function(){
+                text_input.prop('disabled',true);
+                self.model.stop();
+            });
+        var button_pause = $('<button>')
+            .addClass('btn btn-default btn-sm')
+            .append(
+                $('<span>')
+                    .addClass('glyphicon glyphicon-pause')
+                    .text(' Pause')
+            )
+            .click(function(){
+                text_input.prop('disabled',true);
+                self.model.pause();
+            });
+
+        var control = $('<div>')
+            .css({
+                position:'absolute',
+                top: '10px',
+                right: '10px',
+                'z-index':'1000'
+            })
+            .append(button_start)
+            .append(button_stop)
+            .append(button_pause);
+
 		$(this.el)
 			.append(wrapper
 				.append($('<form>')
@@ -128,6 +175,7 @@ var TyperView = Backbone.View.extend({
 					})
 					.append(text_input)
                     .append(score)
+                    .append(control)
                 )
             );
 		
@@ -135,6 +183,11 @@ var TyperView = Backbone.View.extend({
 		text_input.focus();
 		
 		this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'reset:game', function(){
+            console.log('trigged');
+            self.renderScore(score);
+            text_input.val('');
+        });
 	},
 	
 	render: function() {
@@ -171,7 +224,9 @@ var Typer = Backbone.Model.extend({
 		min_speed:1, // speed for 100ms
 		max_speed:5, // speed for 100ms
         frame_rate:6, // frame rate 60fps
-        score:0
+        score:0,
+        interval:null,
+        started:false
 	},
 	
 	initialize: function() {
@@ -182,12 +237,42 @@ var Typer = Backbone.Model.extend({
 	},
 
 	start: function() {
-		var animation_delay = 100 / this.get('frame_rate');
-		var self = this;
-		setInterval(function() {
-			self.iterate();
-		},animation_delay);
+        var interval = this.get('interval');
+        if(!this.get('started'))this.set('started',true);
+        if(!interval){ // resume
+            var animation_delay = 100 / this.get('frame_rate');
+            var self = this;
+            interval = setInterval(function() {
+                self.iterate();
+            },animation_delay);
+            this.set('interval',interval);
+        }
 	},
+
+    stop: function() {
+        var interval = this.get('interval');
+        if(interval) {
+            clearInterval(interval);
+            this.set('interval', null);
+        }
+        if(this.get('started')){
+            this.set('score',0);
+            this.trigger('reset:game');
+            var words = this.get('words');
+            for(var i = words.length - 1;i >= 0;i--) {
+                words.remove(words.at(i));
+            }
+            this.set('started',false);
+        }
+    },
+
+    pause: function() {
+        var interval = this.get('interval');
+        if(interval){
+            clearInterval(interval);
+            this.set('interval',null);
+        }
+    },
 	
 	iterate: function() {
 		var words = this.get('words');
